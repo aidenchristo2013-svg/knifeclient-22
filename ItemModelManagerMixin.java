@@ -2,7 +2,7 @@ package com.example.knifeclient.mixin;
 
 import com.example.knifeclient.Knives;
 import com.example.knifeclient.Modules;
-import net.minecraft.client.MinecraftClient; import net.minecraft.client.render.item.ItemModelManager;
+import net.minecraft.client.MinecraftClient; import net.minecraft.client.item.ItemModelManager;
 import net.minecraft.client.render.item.ItemRenderState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
