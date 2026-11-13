@@ -20,8 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  * The class lives in a different package depending on the mappings, so both names are listed;
  * @Pseudo means the game just skips whichever one does not exist.
  */
-@Pseudo
-@Mixin(targets = {
+@Mixin(ItemModelManager.class)
         "net.minecraft.client.item.ItemModelManager",
         "net.minecraft.client.render.item.ItemModelManager"
 })
