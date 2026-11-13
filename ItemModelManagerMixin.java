@@ -2,7 +2,7 @@ package com.example.knifeclient.mixin;
 
 import com.example.knifeclient.Knives;
 import com.example.knifeclient.Modules;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.MinecraftClient; import net.minecraft.client.render.item.ItemModelManager;
 import net.minecraft.client.render.item.ItemRenderState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
@@ -21,9 +21,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  * @Pseudo means the game just skips whichever one does not exist.
  */
 @Mixin(ItemModelManager.class)
-        "net.minecraft.client.item.ItemModelManager",
-        "net.minecraft.client.render.item.ItemModelManager"
-})
 public abstract class ItemModelManagerMixin {
     @Shadow
     public abstract void updateForLivingEntity(ItemRenderState renderState, ItemStack stack,
