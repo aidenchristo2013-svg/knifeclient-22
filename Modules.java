@@ -14,88 +14,139 @@ public final class Modules {
     public static final List<ClientModule> ALL = new ArrayList<>();
 
     public static final ClientModule GLOW, HEADLESS, KORBLOX, KNIVES, HEADSIZE;
+    public static final ClientModule NAMETAGS, SUSCHUNKS;
+    public static final ColorGroup NT_COLOR, SC_COLOR;
+    public static final Setting.Bool NT_ARMOR, NT_HEALTH, NT_MOBS, NT_DISTSCALE, NT_BG, SC_THROUGH, NT_DEBUG, SC_DEBUG;
+    public static final Setting.Num NT_RANGE, NT_SCALE, SC_MIN, SC_RANGE, SC_LINE;
     public static final ClientModule FPS, CPS, COORDS, PING, CLOCK, KEYS, ARMOR, ZOOM, SPRINT, UI;
 
     public static final ColorGroup GLOW_COLOR, KORBLOX_COLOR, KNIVES_COLOR, UI_ACCENT;
+    public static final Setting.Bool KNIVES_ANIM, KNIVES_DRAW, KNIVES_SWING, KNIVES_SWAY;
     public static final Setting.Bool GLOW_PULSE, HEADLESS_HAT, KNIVES_THIRD, CPS_RIGHT, COORDS_FACING;
     public static final Setting.Bool CLOCK_SEC, KEYS_MOUSE, KEYS_SPACE, ARMOR_TEXT, ZOOM_SMOOTH, SPRINT_STATUS, UI_ANIM;
+    public static final Setting.Num KNIVES_ANIM_SPEED;
     public static final Setting.Num GLOW_PULSE_SPEED, HEAD_SIZE, COORDS_DEC, ZOOM_LEVEL, UI_SPEED, UI_DIM;
+    public static final Setting.Choice UI_THEME;
     public static final Setting.Choice KORBLOX_MODE, KNIVES_KNIFE, CLOCK_FMT, ARMOR_LAYOUT;
     public static final HudStyle FPS_STYLE, CPS_STYLE, COORDS_STYLE, PING_STYLE, CLOCK_STYLE, KEYS_STYLE, ARMOR_STYLE, SPRINT_STYLE;
 
-    private static ClientModule reg(ClientModule m) {
+    static ClientModule reg(ClientModule m) {
         ALL.add(m);
         return m;
     }
 
     static {
         // ---- cosmetics ----
-        GLOW = reg(new ClientModule("glow", "Glow Skin", "Glowing outline around you", true, false));
+        GLOW = reg(new ClientModule("glow", "Glow Skin", "Glowing outline around you", true, false).cat("Cosmetics"));
         GLOW_COLOR = new ColorGroup(GLOW, 200, 0.85, 1.0, false);
         GLOW_PULSE = GLOW.add(new Setting.Bool("pulse", "Pulse", false));
         GLOW_PULSE_SPEED = GLOW.add(new Setting.Num("pspeed", "Pulse Speed", 1.0, 0.2, 5.0, 0.1, "x"));
 
-        HEADLESS = reg(new ClientModule("headless", "Headless", "Hide your head", true, false));
+        HEADLESS = reg(new ClientModule("headless", "Headless", "Hide your head", true, false).cat("Cosmetics"));
         HEADLESS_HAT = HEADLESS.add(new Setting.Bool("hat", "Hide Hat Layer Too", true));
 
-        KORBLOX = reg(new ClientModule("korblox", "Korblox Leg", "Hidden or dark-red right leg", true, false));
+        KORBLOX = reg(new ClientModule("korblox", "Korblox Leg", "Hidden or dark-red right leg", true, false).cat("Cosmetics"));
         KORBLOX_MODE = KORBLOX.add(new Setting.Choice("mode", "Mode", 1, "Hidden", "Tinted"));
         KORBLOX_COLOR = new ColorGroup(KORBLOX, 0, 0.9, 0.35, false);
 
-        KNIVES = reg(new ClientModule("knives", "Knives", "Knife in your empty hand", true, true));
+        KNIVES = reg(new ClientModule("knives", "Knives", "Knife in your empty hand", true, true).cat("Knives"));
         KNIVES_KNIFE = KNIVES.add(new Setting.Choice("knife", "Knife", 0,
-                "Karambit", "Bayonet", "Butterfly Knife", "Huntsman Knife", "Flip Knife", "Falchion Knife"));
+                Knives.NAMES));
+        KNIVES_ANIM = KNIVES.add(new Setting.Bool("anim", "Animations", true));
+        KNIVES_DRAW = KNIVES.add(new Setting.Bool("draw", "Draw Animation", true));
+        KNIVES_SWING = KNIVES.add(new Setting.Bool("swing", "Custom Swing", true));
+        KNIVES_SWAY = KNIVES.add(new Setting.Bool("sway", "Idle + Walk Sway", true));
+        KNIVES_ANIM_SPEED = KNIVES.add(new Setting.Num("aspeed", "Animation Speed", 1.0, 0.5, 2.0, 0.05, "x"));
         KNIVES_THIRD = KNIVES.add(new Setting.Bool("third", "Show In Third Person", true));
         KNIVES_COLOR = new ColorGroup(KNIVES, 0, 0.0, 1.0, false);
 
-        HEADSIZE = reg(new ClientModule("headsize", "Head Size", "Make your head bigger or smaller", true, false));
+        HEADSIZE = reg(new ClientModule("headsize", "Head Size", "Make your head bigger or smaller", true, false).cat("Cosmetics"));
         HEAD_SIZE = HEADSIZE.add(new Setting.Num("size", "Head Size", 1.5, 0.5, 2.5, 0.05, "x"));
 
+        // ---- render ----
+        NAMETAGS = reg(new ClientModule("nametags", "Nametags", "Name, health and gear tags through walls", true, false).cat("Render"));
+        NT_RANGE = NAMETAGS.add(new Setting.Num("range", "Range", 64, 8, 256, 4, " m"));
+        NT_SCALE = NAMETAGS.add(new Setting.Num("scale", "Size", 1.0, 0.5, 2.5, 0.1, "x"));
+        NT_DISTSCALE = NAMETAGS.add(new Setting.Bool("distscale", "Scale With Distance", true));
+        NT_HEALTH = NAMETAGS.add(new Setting.Bool("health", "Show Health", true));
+        NT_ARMOR = NAMETAGS.add(new Setting.Bool("armor", "Show Gear", true));
+        NT_MOBS = NAMETAGS.add(new Setting.Bool("mobs", "Include Mobs", false));
+        NT_BG = NAMETAGS.add(new Setting.Bool("bg", "Background", true));
+        NT_DEBUG = NAMETAGS.add(new Setting.Bool("debug", "Debug Overlay", false));
+        NT_COLOR = new ColorGroup(NAMETAGS, 0, 0.0, 1.0, false);
+
+        SUSCHUNKS = reg(new ClientModule("suschunks", "Sus Chunks", "Outline chunks with lots of player-made blocks", true, false).cat("Render"));
+        SC_MIN = SUSCHUNKS.add(new Setting.Num("min", "Min Score", 20, 4, 200, 1, ""));
+        SC_RANGE = SUSCHUNKS.add(new Setting.Num("range", "Range", 12, 2, 32, 1, " chunks"));
+        SC_LINE = SUSCHUNKS.add(new Setting.Num("line", "Line Width", 2.0, 1.0, 6.0, 0.5, ""));
+        SC_THROUGH = SUSCHUNKS.add(new Setting.Bool("through", "Show Through Walls", true));
+        SC_DEBUG = SUSCHUNKS.add(new Setting.Bool("debug", "Debug Overlay", false));
+        SC_COLOR = new ColorGroup(SUSCHUNKS, 0, 0.85, 1.0, false);
+
         // ---- HUD ----
-        FPS = reg(new ClientModule("fps", "FPS Counter", "Shows frames per second", true, false));
+        FPS = reg(new ClientModule("fps", "FPS Counter", "Shows frames per second", true, false).cat("HUD"));
         FPS_STYLE = new HudStyle(FPS, 1, 1);
 
-        CPS = reg(new ClientModule("cps", "CPS Counter", "Clicks per second", true, false));
+        CPS = reg(new ClientModule("cps", "CPS Counter", "Clicks per second", true, false).cat("HUD"));
         CPS_RIGHT = CPS.add(new Setting.Bool("right", "Show Right Click", true));
         CPS_STYLE = new HudStyle(CPS, 1, 7);
 
-        COORDS = reg(new ClientModule("coords", "Coordinates", "Position and direction", true, false));
+        COORDS = reg(new ClientModule("coords", "Coordinates", "Position and direction", true, false).cat("HUD"));
         COORDS_DEC = COORDS.add(new Setting.Num("dec", "Decimals", 0, 0, 2, 1, ""));
         COORDS_FACING = COORDS.add(new Setting.Bool("facing", "Show Direction", true));
         COORDS_STYLE = new HudStyle(COORDS, 1, 13);
 
-        PING = reg(new ClientModule("ping", "Ping", "Server latency", true, false));
+        PING = reg(new ClientModule("ping", "Ping", "Server latency", true, false).cat("HUD"));
         PING_STYLE = new HudStyle(PING, 1, 19);
 
-        CLOCK = reg(new ClientModule("clock", "Clock", "Real-world time", true, false));
+        CLOCK = reg(new ClientModule("clock", "Clock", "Real-world time", true, false).cat("HUD"));
         CLOCK_FMT = CLOCK.add(new Setting.Choice("fmt", "Format", 0, "24 Hour", "12 Hour"));
         CLOCK_SEC = CLOCK.add(new Setting.Bool("sec", "Show Seconds", false));
         CLOCK_STYLE = new HudStyle(CLOCK, 1, 25);
 
-        KEYS = reg(new ClientModule("keys", "Keystrokes", "WASD and mouse display", true, false));
+        KEYS = reg(new ClientModule("keys", "Keystrokes", "WASD and mouse display", true, false).cat("HUD"));
         KEYS_MOUSE = KEYS.add(new Setting.Bool("mouse", "Show Mouse Buttons", true));
         KEYS_SPACE = KEYS.add(new Setting.Bool("space", "Show Space Bar", true));
         KEYS_STYLE = new HudStyle(KEYS, 1, 40);
 
-        ARMOR = reg(new ClientModule("armor", "Armor HUD", "Armor and held item", true, false));
+        ARMOR = reg(new ClientModule("armor", "Armor HUD", "Armor and held item", true, false).cat("HUD"));
         ARMOR_LAYOUT = ARMOR.add(new Setting.Choice("layout", "Layout", 0, "Vertical", "Horizontal"));
         ARMOR_TEXT = ARMOR.add(new Setting.Bool("text", "Durability Numbers", true));
         ARMOR_STYLE = new HudStyle(ARMOR, 99, 45);
 
         // ---- utility ----
-        ZOOM = reg(new ClientModule("zoom", "Zoom", "Hold C to zoom in", true, false));
+        ZOOM = reg(new ClientModule("zoom", "Zoom", "Hold C to zoom in", true, false).cat("Utility"));
         ZOOM_LEVEL = ZOOM.add(new Setting.Num("level", "Zoom Level", 4.0, 1.5, 10.0, 0.1, "x"));
         ZOOM_SMOOTH = ZOOM.add(new Setting.Bool("smooth", "Smooth Zoom", true));
 
-        SPRINT = reg(new ClientModule("sprint", "Toggle Sprint", "Auto-sprint while walking forward", true, false));
+        SPRINT = reg(new ClientModule("sprint", "Toggle Sprint", "Auto-sprint while walking forward", true, false).cat("Utility"));
         SPRINT_STATUS = SPRINT.add(new Setting.Bool("status", "Show Status", true));
         SPRINT_STYLE = new HudStyle(SPRINT, 50, 86);
 
-        UI = reg(new ClientModule("ui", "Interface", "Menu colours and animations", false, true));
+        UI = reg(new ClientModule("ui", "Interface", "Menu colours and animations", false, true).cat("Interface"));
+        UI_THEME = UI.add(new Setting.Choice("theme", "Theme", 1, "Custom Colour", "Ocean", "Crimson", "Emerald", "Violet", "Sunset"));
         UI_ACCENT = new ColorGroup(UI, 190, 0.7, 1.0, false);
         UI_ANIM = UI.add(new Setting.Bool("anim", "Animations", true));
         UI_SPEED = UI.add(new Setting.Num("speed", "Animation Speed", 1.0, 0.5, 2.5, 0.1, "x"));
         UI_DIM = UI.add(new Setting.Num("dim", "Background Dim", 0.45, 0.0, 0.85, 0.05, ""));
+
+        Features.init();
+    }
+
+    private static final int[] THEME_A = {0, 0x2FC8FF, 0xFF3B54, 0x2BE08A, 0xA066FF, 0xFF8A3D};
+    private static final int[] THEME_B = {0, 0x6A5BFF, 0xFF9A3B, 0x2FA8FF, 0xFF4FB8, 0xFF3B7A};
+
+    /** Main menu accent colour. */
+    public static int accent() {
+        int t = UI_THEME.index;
+        return t == 0 ? UI_ACCENT.rgb(0.0) : THEME_A[t];
+    }
+
+    /** Second menu colour (used for gradients). */
+    public static int accent2() {
+        int t = UI_THEME.index;
+        if (t == 0) return ColorGroup.hsb((float) (UI_ACCENT.hue.value / 360.0 + 0.12), (float) UI_ACCENT.sat.value, (float) UI_ACCENT.bri.value);
+        return THEME_B[t];
     }
 
     /** Colour of the glow outline (pulsing if enabled). */

@@ -11,6 +11,8 @@
     "ItemModelManagerMixin",
     "LivingEntityRendererMixin",
     "ModelPartMixin",
+    "ClientWorldMixin",
+    "InGameHudMixin",
     "PlayerEntityRendererMixin"
   ],
   "injectors": { "defaultRequire": 1 }

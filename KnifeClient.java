@@ -18,6 +18,7 @@ public class KnifeClient implements ClientModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger("knifeclient");
     private static KeyBinding menuKey;
     private static KeyBinding zoomKey;
+    private static KeyBinding inspectKey;
     private static boolean sprintForced = false;
 
     @Override
@@ -28,6 +29,13 @@ public class KnifeClient implements ClientModInitializer {
         zoomKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.knifeclient.zoom", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_C, "category.knifeclient"));
 
+        inspectKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                "key.knifeclient.inspect", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_V, "category.knifeclient"));
+
+        Nametags.init();
+        SusChunks.init();
+        FeatureTick.init();
+
         ClientTickEvents.END_CLIENT_TICK.register(KnifeClient::tick);
         HudRenderCallback.EVENT.register((ctx, tickCounter) -> Hud.render(ctx));
         ClientLifecycleEvents.CLIENT_STOPPING.register(client -> Modules.save());
@@ -35,7 +43,7 @@ public class KnifeClient implements ClientModInitializer {
         // Proof-of-life message so you know the mod loaded.
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> client.execute(() -> {
             if (client.player != null) {
-                client.player.sendMessage(Text.literal("[Knife Client] Loaded! Press Right Shift for the menu."), false);
+                client.player.sendMessage(Text.literal("[Knife Client] Loaded! Right Shift = menu, V = inspect knife."), false);
             }
         }));
         LOGGER.info("Knife Client loaded");
@@ -44,6 +52,9 @@ public class KnifeClient implements ClientModInitializer {
     private static void tick(MinecraftClient client) {
         while (menuKey.wasPressed()) {
             client.setScreen(new ModuleScreen());
+        }
+        while (inspectKey.wasPressed()) {
+            if (client.currentScreen == null) Knives.inspect();
         }
         Zoom.active = Modules.ZOOM.enabled && zoomKey.isPressed() && client.currentScreen == null;
 

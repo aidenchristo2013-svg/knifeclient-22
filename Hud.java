@@ -63,6 +63,7 @@ public final class Hud {
         }
         if (Modules.KEYS.enabled) keys(ctx, mc);
         if (Modules.ARMOR.enabled) armor(ctx, mc);
+        HudExtras.render(ctx, mc);
     }
 
     private static void pollClicks(MinecraftClient mc) {
@@ -79,7 +80,7 @@ public final class Hud {
         while (!RMB.isEmpty() && now - RMB.peekFirst() > 1000) RMB.pollFirst();
     }
 
-    private static void begin(DrawContext ctx, HudStyle st, int w, int h) {
+    static void begin(DrawContext ctx, HudStyle st, int w, int h) {
         float s = (float) st.scale.value;
         int sw = ctx.getScaledWindowWidth();
         int sh = ctx.getScaledWindowHeight();
@@ -90,11 +91,11 @@ public final class Hud {
         ctx.getMatrices().scale(s, s, 1f);
     }
 
-    private static void end(DrawContext ctx) {
+    static void end(DrawContext ctx) {
         ctx.getMatrices().pop();
     }
 
-    private static void textBox(DrawContext ctx, MinecraftClient mc, HudStyle st, String text) {
+    static void textBox(DrawContext ctx, MinecraftClient mc, HudStyle st, String text) {
         TextRenderer tr = mc.textRenderer;
         int w = tr.getWidth(text) + 8;
         int h = 14;
