@@ -7,7 +7,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.DeathScreen;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.option.ParticlesMode;
 import net.minecraft.client.option.SimpleOption;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.world.ClientWorld;
@@ -36,7 +35,7 @@ public final class FeatureTick {
 
     private static KeyBinding wpAdd, wpClear;
     private static boolean nvAdded, bobSaved, prevBob, partSaved, hbOn, sneakForced, walkForced, deathNotified;
-    private static ParticlesMode prevParticles = ParticlesMode.ALL;
+    private static Object prevParticles;
     private static int afkTicks, afkJump;
     private static final Random RNG = new Random();
     private static final long[] TIMES = {1000L, 6000L, 12000L, 14000L, 18000L, 23000L};
@@ -67,6 +66,7 @@ public final class FeatureTick {
         };
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private static void tick(MinecraftClient mc) {
         ClientWorld w = mc.world;
         ClientPlayerEntity p = mc.player;
@@ -119,12 +119,16 @@ public final class FeatureTick {
             bobSaved = false;
         }
 
-        SimpleOption<ParticlesMode> part = mc.options.getParticles();
+        // Minimal Particles: the enum type is looked up at runtime (ALL, DECREASED, MINIMAL: last = minimal)
+        SimpleOption part = mc.options.getParticles();
         if (Features.PARTICLES.enabled) {
-            if (!partSaved) { prevParticles = part.getValue(); partSaved = true; }
-            if (part.getValue() != ParticlesMode.MINIMAL) part.setValue(ParticlesMode.MINIMAL);
+            Object cur = part.getValue();
+            if (!partSaved) { prevParticles = cur; partSaved = true; }
+            Object[] all = ((Enum<?>) cur).getDeclaringClass().getEnumConstants();
+            Object minimal = all[all.length - 1];
+            if (cur != minimal) part.setValue(minimal);
         } else if (partSaved) {
-            part.setValue(prevParticles);
+            if (prevParticles != null) part.setValue(prevParticles);
             partSaved = false;
         }
 
